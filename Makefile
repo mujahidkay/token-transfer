@@ -4,11 +4,13 @@ IMAGE_NAME = cosmos-relayer
 CONTAINER_NAME = cosmos-relayer-container
 
 INTERNAL_KEY ?= user1
-EXTERNAL_KEY ?= gov1
 INTERNAL_MNEMONIC ?= "spike siege world rather ordinary upper napkin voice brush oppose junior route trim crush expire angry seminar anchor panther piano image pepper chest alone"
-EXTERNAL_MNEMONIC := ""
 INTERNAL_CHAIN_NAME ?= agoric
+EXTERNAL_KEY ?= gov1
+EXTERNAL_MNEMONIC := ""
 EXTERNAL_CHAIN_NAME ?= ollinet
+EXTERNAL_CHAIN_RPC ?= ""
+EXTERNAL_CHAIN_ID ?= "" 
 
 build:
 	docker build -t $(IMAGE_NAME) .
@@ -25,6 +27,8 @@ endif
 		-e EXTERNAL_KEY=$(EXTERNAL_KEY) \
 		-e EXTERNAL_MNEMONIC=$(EXTERNAL_MNEMONIC) \
 		-e EXTERNAL_CHAIN_NAME=$(EXTERNAL_CHAIN_NAME) \
+		-e EXTERNAL_CHAIN_RPC=$(EXTERNAL_CHAIN_RPC) \
+		-e EXTERNAL_CHAIN_ID=$(EXTERNAL_CHAIN_ID) \
 		$(IMAGE_NAME)
 
 exec:
@@ -40,8 +44,6 @@ show-channels:
 	@docker exec $(CONTAINER_NAME) /bin/bash -c '\
 		TRANSFER_EXT_CHANNEL_ID=$$(relayer q channels ${INTERNAL_CHAIN_NAME} ${EXTERNAL_CHAIN_NAME} | jq -r '.channel_id' | tail -n 1); \
 		TRANSFER_INT_CHANNEL_ID=$$(relayer q channels ${INTERNAL_CHAIN_NAME} ${EXTERNAL_CHAIN_NAME} | jq -r '.counterparty.channel_id' | head -n 1); \
-		echo "TRANSFER_EXT_CHANNEL_ID=$$TRANSFER_EXT_CHANNEL_ID" >> /etc/environment; \
-		echo "TRANSFER_INT_CHANNEL_ID=$$TRANSFER_INT_CHANNEL_ID" >> /etc/environment; \
 		echo "Channel IDs set: TRANSFER_EXT_CHANNEL_ID=$$TRANSFER_EXT_CHANNEL_ID, TRANSFER_INT_CHANNEL_ID=$$TRANSFER_INT_CHANNEL_ID"'
 
 show-addresses:
