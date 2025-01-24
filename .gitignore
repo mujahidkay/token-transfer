@@ -1,0 +1,4 @@
+.aider.conf.yml
+.aider*
+.env
+node_modules

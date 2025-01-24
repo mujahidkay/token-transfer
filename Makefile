@@ -46,6 +46,10 @@ show-channels:
 		TRANSFER_INT_CHANNEL_ID=$$(relayer q channels ${INTERNAL_CHAIN_NAME} ${EXTERNAL_CHAIN_NAME} | jq -r '.counterparty.channel_id' | sort -t_ -k2 -n | tail -n 1); \
 		echo "Channel IDs set: TRANSFER_EXT_CHANNEL_ID=$$TRANSFER_EXT_CHANNEL_ID, TRANSFER_INT_CHANNEL_ID=$$TRANSFER_INT_CHANNEL_ID"'
 
+show-all-channels:
+	docker exec $(CONTAINER_NAME) /bin/bash -c '\
+		relayer q channels ${INTERNAL_CHAIN_NAME} ${EXTERNAL_CHAIN_NAME}'
+
 show-addresses:
 	@docker exec $(CONTAINER_NAME) /bin/bash -c '\
 		echo "===============Internal Chain Addresses==============="; \
